@@ -1,0 +1,21 @@
+{% extends 'newsroom/base.html' %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card">
+    <span class="auth-icon" aria-hidden="true">◈</span>
+    <p class="section-kicker">{% if ui_language == 'ar' %}حساب NABD SI{% else %}NABD SI ACCOUNT{% endif %}</p>
+    <h1>{% if ui_language == 'ar' %}احفظ ما يهمك{% else %}Your briefing, in sync.{% endif %}</h1>
+    <p>{% if ui_language == 'ar' %}سجّل الدخول لحفظ الأخبار ومزامنة تفضيلات اللغة بين أجهزتك.{% else %}Sign in to keep your bookmarks and language preference synced across devices.{% endif %}</p>
+    {% if is_oidc_configured %}
+      <a class="button button-primary auth-button" href="{% url 'oidc_authentication_init' %}">{% if ui_language == 'ar' %}المتابعة بأمان{% else %}Continue securely{% endif %}<span aria-hidden="true">→</span></a>
+      <p class="auth-note">{% if ui_language == 'ar' %}تتم إدارة تسجيل الدخول والمصادقة متعددة العوامل عبر مزوّد الهوية.{% else %}Sign-in and multi-factor authentication are handled by the identity provider.{% endif %}</p>
+    {% else %}
+      <div class="setup-notice" role="status">
+        <strong>{% if ui_language == 'ar' %}تسجيل الدخول غير مهيأ{% else %}Account sign-in is not configured{% endif %}</strong>
+        <span>{% if ui_language == 'ar' %}يجب ربط Amazon Cognito قبل تفعيل الحسابات. لا تُحفظ بيانات الدخول في هذا التطبيق.{% else %}Connect Amazon Cognito before enabling accounts. This app does not collect or store passwords.{% endif %}</span>
+      </div>
+    {% endif %}
+    <a class="back-link" href="{% url 'home' %}">← {% if ui_language == 'ar' %}العودة إلى الأخبار{% else %}Back to the news feed{% endif %}</a>
+  </div>
+</section>
+{% endblock %}

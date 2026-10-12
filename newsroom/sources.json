@@ -1,0 +1,83 @@
+[
+  {
+    "id": "the-hacker-news",
+    "name": "The Hacker News",
+    "url": "https://feeds.feedburner.com/TheHackersNews",
+    "category": "cybersecurity",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "bleepingcomputer",
+    "name": "BleepingComputer",
+    "url": "https://www.bleepingcomputer.com/feed/",
+    "category": "cybersecurity",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "dark-reading",
+    "name": "Dark Reading",
+    "url": "https://www.darkreading.com/rss.xml",
+    "category": "cybersecurity",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "krebs-on-security",
+    "name": "Krebs on Security",
+    "url": "https://krebsonsecurity.com/feed/",
+    "category": "cybersecurity",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "cisa-advisories",
+    "name": "CISA Cybersecurity Advisories",
+    "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
+    "category": "cybersecurity",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "mit-tech-review-ai",
+    "name": "MIT Technology Review — AI",
+    "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed/",
+    "category": "ai",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "techcrunch-ai",
+    "name": "TechCrunch — AI",
+    "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+    "category": "ai",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "arxiv-ai",
+    "name": "arXiv — cs.AI",
+    "url": "https://rss.arxiv.org/rss/cs.AI",
+    "category": "ai",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "openai-news",
+    "name": "OpenAI News",
+    "url": "https://openai.com/news/rss.xml",
+    "category": "ai",
+    "language": "en",
+    "enabled": true
+  },
+  {
+    "id": "aitnews",
+    "name": "البوابة التقنية (AITNews)",
+    "url": "https://aitnews.com/feed/",
+    "category": "mixed",
+    "language": "ar",
+    "enabled": false,
+    "notes": "Disabled by default until the publisher feed URL and usage terms are verified."
+  }
+]

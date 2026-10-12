@@ -1,0 +1,94 @@
+{% extends 'newsroom/base.html' %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow"><span class="eyebrow-line"></span>{% if ui_language == 'ar' %}موجز مُنتقى بعناية{% else %}THE SIGNAL, WITHOUT THE NOISE{% endif %}</p>
+    <h1>{% if ui_language == 'ar' %}نبض <span>التقنية والأمن</span>{% else %}Stay ahead of <span>what matters.</span>{% endif %}</h1>
+    <p class="hero-description">{% if ui_language == 'ar' %}أخبار الذكاء الاصطناعي والأمن السيبراني، بملخصات عربية وإنجليزية واضحة وموجزة.{% else %}A clear, bilingual briefing on artificial intelligence and cybersecurity — curated from selected public sources.{% endif %}</p>
+  </div>
+  <div class="hero-orbit" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="orbit-core">N</span><i class="orbit-dot dot-one"></i><i class="orbit-dot dot-two"></i><i class="orbit-dot dot-three"></i></div>
+  <div class="hero-bottom">
+    <span class="live-label"><span class="status-dot"></span>{% if ui_language == 'ar' %}تحديثات دورية{% else %}PERIODIC BRIEFING{% endif %}</span>
+    <span class="hero-count">{{ results_count }} {% if ui_language == 'ar' %}خبر{% else %}stories{% endif %}</span>
+  </div>
+</section>
+
+<section class="feed-section" aria-labelledby="feed-heading">
+  <div class="feed-heading-row">
+    <div>
+      <p class="section-kicker">{% if ui_language == 'ar' %}المشهد الآن{% else %}THE LATEST{% endif %}</p>
+      <h2 id="feed-heading">{% if saved_only %}{% if ui_language == 'ar' %}أخبارك المحفوظة{% else %}Your saved stories{% endif %}{% else %}{% if ui_language == 'ar' %}آخر المستجدات{% else %}Latest intelligence{% endif %}{% endif %}</h2>
+    </div>
+    <span class="feed-meta">{% if ui_language == 'ar' %}مصادر عامة مختارة{% else %}Selected public sources{% endif %}<span class="meta-separator">·</span>{% if ui_language == 'ar' %}ملخصات ثنائية اللغة{% else %}Bilingual summaries{% endif %}</span>
+  </div>
+
+  <form class="filter-bar" action="{% url 'home' %}" method="get">
+    {% if saved_only %}<input type="hidden" name="saved" value="1">{% endif %}
+    <label class="search-box">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <span class="visually-hidden">{% if ui_language == 'ar' %}بحث في الأخبار{% else %}Search news{% endif %}</span>
+      <input name="q" type="search" maxlength="100" value="{{ query }}" placeholder="{% if ui_language == 'ar' %}ابحث في العناوين والملخصات…{% else %}Search headlines and summaries…{% endif %}">
+    </label>
+    <label class="category-select">
+      <span class="visually-hidden">{% if ui_language == 'ar' %}تصنيف الأخبار{% else %}News category{% endif %}</span>
+      <select name="category">
+        <option value="">{% if ui_language == 'ar' %}كل الموضوعات{% else %}All topics{% endif %}</option>
+        <option value="ai" {% if selected_category == 'ai' %}selected{% endif %}>{% if ui_language == 'ar' %}الذكاء الاصطناعي{% else %}Artificial intelligence{% endif %}</option>
+        <option value="cybersecurity" {% if selected_category == 'cybersecurity' %}selected{% endif %}>{% if ui_language == 'ar' %}الأمن السيبراني{% else %}Cybersecurity{% endif %}</option>
+      </select>
+    </label>
+    <button class="button button-filter" type="submit">{% if ui_language == 'ar' %}تصفية{% else %}Apply{% endif %}</button>
+    {% if query or selected_category %}<a class="clear-filter" href="{% if saved_only %}{% url 'bookmarks' %}{% else %}{% url 'home' %}{% endif %}">{% if ui_language == 'ar' %}مسح{% else %}Clear{% endif %}</a>{% endif %}
+  </form>
+
+  {% if articles %}
+    <div class="news-grid">
+      {% for article in articles %}
+      <article class="news-card{% if article.priority == 'high' %} is-priority{% endif %}" lang="{{ ui_language }}" dir="{{ ui_direction }}">
+        <div class="card-topline">
+          <span class="category-pill category-{{ article.category }}"><span class="pill-mark"></span>{{ article.category_label }}</span>
+          {% if article.priority == 'high' %}<span class="priority-pill">{{ article.priority_label }}</span>{% endif %}
+          {% if article.is_demo %}<span class="demo-pill">{% if ui_language == 'ar' %}عرض توضيحي{% else %}DEMO{% endif %}</span>{% endif %}
+        </div>
+        <h3 class="card-title">{{ article.card_title }}</h3>
+        <p class="card-summary">{{ article.card_summary }}</p>
+        {% if article.card_bullets %}
+          <ul class="key-points">
+            {% for point in article.card_bullets|slice:":3" %}<li>{{ point }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+        <div class="card-footer">
+          <div class="source-meta">
+            <span class="source-name">{% if article.source %}{{ article.source.name }}{% else %}NABD SI{% endif %}</span>
+            <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'M j, Y · H:i' }}</time>
+          </div>
+          <div class="card-actions">
+            {% if user.is_authenticated %}
+              <form action="{% url 'toggle_bookmark' article.id %}" method="post" class="bookmark-form">
+                {% csrf_token %}
+                <input type="hidden" name="return_to" value="{% if saved_only %}bookmarks{% else %}home{% endif %}">
+                {% if article.id in saved_ids %}
+                  <button class="bookmark-button saved" type="submit" aria-label="{% if ui_language == 'ar' %}إزالة من المحفوظات{% else %}Remove bookmark{% endif %}" title="{% if ui_language == 'ar' %}إزالة من المحفوظات{% else %}Remove bookmark{% endif %}"><span aria-hidden="true">◆</span></button>
+                {% else %}
+                  <button class="bookmark-button" type="submit" aria-label="{% if ui_language == 'ar' %}حفظ الخبر{% else %}Save story{% endif %}" title="{% if ui_language == 'ar' %}حفظ الخبر{% else %}Save story{% endif %}"><span aria-hidden="true">◇</span></button>
+                {% endif %}
+              </form>
+            {% else %}
+              <a class="bookmark-button" href="{% url 'sign_in' %}" aria-label="{% if ui_language == 'ar' %}سجّل الدخول لحفظ الخبر{% else %}Sign in to save{% endif %}" title="{% if ui_language == 'ar' %}سجّل الدخول لحفظ الخبر{% else %}Sign in to save{% endif %}"><span aria-hidden="true">◇</span></a>
+            {% endif %}
+            {% if article.safe_url %}<a class="source-link" href="{{ article.safe_url }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{% if ui_language == 'ar' %}اقرأ المصدر{% else %}Read source{% endif %}<span aria-hidden="true">↗</span></a>{% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <span class="empty-symbol" aria-hidden="true">◌</span>
+      <h3>{% if saved_only %}{% if ui_language == 'ar' %}لا توجد أخبار محفوظة بعد{% else %}No saved stories yet{% endif %}{% else %}{% if ui_language == 'ar' %}لا توجد أخبار مطابقة{% else %}No stories found{% endif %}{% endif %}</h3>
+      <p>{% if saved_only %}{% if ui_language == 'ar' %}احفظ الأخبار التي تهمك لتعود إليها من أي جهاز بعد تسجيل الدخول.{% else %}Bookmark articles to find them here on any device when you sign in.{% endif %}{% else %}{% if ui_language == 'ar' %}سيظهر هنا موجز الأخبار بعد إعداد مصادر RSS وتشغيل مهمة الاستيراد.{% else %}The feed will appear here after RSS sources are configured and the ingestion worker runs.{% endif %}{% endif %}</p>
+    </div>
+  {% endif %}
+  <p class="feed-disclaimer">{% if ui_language == 'ar' %}الملخصات مُولّدة آلياً وقد تحتاج إلى مراجعة المصدر الأصلي. لا تمثل الأخبار تأييداً من NABD SI.{% else %}AI-generated summaries may omit nuance. Verify important details with the original publisher; inclusion is not endorsement.{% endif %}</p>
+</section>
+{% endblock %}

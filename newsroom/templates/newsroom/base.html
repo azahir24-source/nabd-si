@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ ui_language }}" dir="{{ ui_direction }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1724">
+  <meta name="description" content="NABD SI — AI and cybersecurity news, in Arabic and English.">
+  <title>{% if page_title %}{{ page_title }} · {% endif %}NABD SI</title>
+  <link rel="manifest" href="{% static 'newsroom/manifest.webmanifest' %}">
+  <link rel="icon" href="{% static 'newsroom/icon.svg' %}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{% static 'newsroom/icon-192.png' %}">
+  <link rel="stylesheet" href="{% static 'newsroom/site.css' %}">
+  <script src="{% static 'newsroom/app.js' %}" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">{% if ui_language == 'ar' %}تجاوز إلى المحتوى{% else %}Skip to content{% endif %}</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="{% url 'home' %}" aria-label="NABD SI home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>NABD <em>SI</em></strong><small>{% if ui_language == 'ar' %}نبض الأمن والذكاء الاصطناعي{% else %}AI &amp; cybersecurity intelligence{% endif %}</small></span>
+      </a>
+      <nav class="main-nav" aria-label="{% if ui_language == 'ar' %}التنقل الرئيسي{% else %}Main navigation{% endif %}">
+        <a class="nav-link {% if not saved_only %}active{% endif %}" href="{% url 'home' %}">{% if ui_language == 'ar' %}آخر الأخبار{% else %}Latest{% endif %}</a>
+        {% if user.is_authenticated %}
+          <a class="nav-link {% if saved_only %}active{% endif %}" href="{% url 'bookmarks' %}">{% if ui_language == 'ar' %}المحفوظات{% else %}Bookmarks{% endif %}</a>
+        {% endif %}
+      </nav>
+      <div class="header-actions">
+        <form class="language-switch" action="{% url 'set_language' %}" method="post" aria-label="{% if ui_language == 'ar' %}اختيار اللغة{% else %}Choose language{% endif %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit" name="language" value="en" aria-pressed="{% if ui_language == 'en' %}true{% else %}false{% endif %}" class="{% if ui_language == 'en' %}selected{% endif %}">EN</button>
+          <button type="submit" name="language" value="ar" aria-pressed="{% if ui_language == 'ar' %}true{% else %}false{% endif %}" class="{% if ui_language == 'ar' %}selected{% endif %}">عربي</button>
+        </form>
+        {% if user.is_authenticated %}
+          <span class="signed-in"><span class="online-dot"></span>{% if ui_language == 'ar' %}مسجّل الدخول{% else %}Signed in{% endif %}</span>
+          <form action="{% url 'sign_out' %}" method="post" class="logout-form">
+            {% csrf_token %}
+            <button class="button button-quiet" type="submit">{% if ui_language == 'ar' %}خروج{% else %}Sign out{% endif %}</button>
+          </form>
+        {% else %}
+          <a class="button button-quiet signin-link" href="{% url 'sign_in' %}">{% if ui_language == 'ar' %}تسجيل الدخول{% else %}Sign in{% endif %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if messages %}
+  <div class="message-stack" role="status" aria-live="polite">
+    {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+  </div>
+  {% endif %}
+
+  <main id="main-content" class="page-shell">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© {% now "Y" %} NABD SI</span>
+      <span>{% if ui_language == 'ar' %}مصادر عامة · ملخصات ثنائية اللغة{% else %}Public sources · bilingual summaries{% endif %}</span>
+      <span class="footer-security">{% if ui_language == 'ar' %}خصوصيتك أولاً{% else %}Privacy by design{% endif %}</span>
+    </div>
+  </footer>
+</body>
+</html>
