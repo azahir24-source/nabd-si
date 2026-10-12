@@ -33,7 +33,7 @@ def csv_env(name: str, default: str = "") -> list[str]:
 
 
 _allowed_hosts_env = csv_env("DJANGO_ALLOWED_HOSTS")
-ALLOWED_HOSTS = _allowed_hosts_env or csv_env("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver")
+ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = [value.rstrip("/") for value in csv_env("DJANGO_CSRF_TRUSTED_ORIGINS")]
 DJANGO_HEALTHCHECK_CIDRS = csv_env("DJANGO_HEALTHCHECK_CIDRS")
 if IS_PRODUCTION:
