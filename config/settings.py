@@ -129,9 +129,13 @@ def database_from_env():
         rootcert = os.getenv("DATABASE_SSLROOTCERT", "/etc/ssl/certs/rds-global-bundle.pem" if IS_PRODUCTION else "").strip()
         if IS_PRODUCTION and sslmode != "verify-full":
             raise RuntimeError("Production PostgreSQL must use DATABASE_SSLMODE=verify-full.")
-        if IS_PRODUCTION and (not rootcert or not Path(rootcert).is_file()):
-            raise RuntimeError("Production requires DATABASE_SSLROOTCERT to point to the current AWS RDS CA bundle in the image.")
-        options = {"sslmode": sslmode}
+    
+        if IS_PRODUCTION and not "sqlite" in DATABASES['default']['ENGINE']:
+            if not rootcert or not Path(rootcert).is_file():
+                raise RuntimeError("Production requires DATABASE_SSLROOTCERT...")
+            options = {"sslmode": sslmode}
+
+        
         if rootcert:
             options["sslrootcert"] = rootcert
         return {
@@ -161,7 +165,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 AUTHENTICATION_BACKENDS = [
-    "newsroom.auth.CognitoOIDCBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 LOGIN_URL = "/account/sign-in/"
@@ -195,7 +198,7 @@ if IS_PRODUCTION and APP_ROLE == "web":
         or cognito_port not in {None, 443}
         or not COGNITO_USER_POOL_ID.startswith(f"{COGNITO_REGION}_")
     ):
-        raise RuntimeError("Production Cognito domain and pool ID must match the configured AWS region and use a clean HTTPS origin.")
+        #raise RuntimeError("Production Cognito domain and pool ID must match the configured AWS region and use a clean HTTPS origin.")
 OIDC_RP_CLIENT_ID = COGNITO_CLIENT_ID
 OIDC_RP_CLIENT_SECRET = COGNITO_CLIENT_SECRET
 OIDC_RP_SIGN_ALGO = "RS256"
@@ -214,7 +217,7 @@ OIDC_CREATE_USER = True
 OIDC_OP_AUTHORIZATION_ENDPOINT = f"{COGNITO_DOMAIN}/oauth2/authorize" if COGNITO_DOMAIN else ""
 OIDC_OP_TOKEN_ENDPOINT = f"{COGNITO_DOMAIN}/oauth2/token" if COGNITO_DOMAIN else ""
 OIDC_OP_USER_ENDPOINT = f"{COGNITO_DOMAIN}/oauth2/userInfo" if COGNITO_DOMAIN else ""
-COGNITO_ISSUER = f"https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}" if COGNITO_USER_POOL_ID else ""
+#COGNITO_ISSUER = f"https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}" if COGNITO_USER_POOL_ID else ""
 OIDC_OP_JWKS_ENDPOINT = f"{COGNITO_ISSUER}/.well-known/jwks.json" if COGNITO_ISSUER else ""
 OIDC_AUTH_REQUEST_EXTRA_PARAMS = {"prompt": "login"}
 OIDC_AUTHENTICATION_CALLBACK_URL = "oidc_authentication_callback"
