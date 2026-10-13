@@ -171,6 +171,7 @@ LOGIN_URL = "/account/sign-in/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+COGNITO_ISSUER = ""
 # AWS Cognito hosted OIDC authorization-code flow, with PKCE and RS256/JWKS verification.
 COGNITO_REGION = os.getenv("COGNITO_REGION", "eu-central-1").strip()
 COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID", "").strip()
