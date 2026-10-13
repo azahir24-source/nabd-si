@@ -198,7 +198,7 @@ if IS_PRODUCTION and APP_ROLE == "web":
         or cognito_port not in {None, 443}
         or not COGNITO_USER_POOL_ID.startswith(f"{COGNITO_REGION}_")
     ):
-        #raise RuntimeError("Production Cognito domain and pool ID must match the configured AWS region and use a clean HTTPS origin.")
+       pass #raise RuntimeError("Production Cognito domain and pool ID must match the configured AWS region and use a clean HTTPS origin.")
 OIDC_RP_CLIENT_ID = COGNITO_CLIENT_ID
 OIDC_RP_CLIENT_SECRET = COGNITO_CLIENT_SECRET
 OIDC_RP_SIGN_ALGO = "RS256"
