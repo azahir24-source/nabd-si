@@ -24,6 +24,7 @@ from django.db import connection, transaction
 from django.utils import timezone
 
 from .models import Article, IngestionRun, Source
+from deep_translator import GoogleTranslator
 
 logger = logging.getLogger(__name__)
 MAX_FEED_BYTES = 2 * 1024 * 1024
