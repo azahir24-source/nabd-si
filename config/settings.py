@@ -78,7 +78,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "newsroom.apps.NewsroomConfig",
-    "mozilla_django_oidc",
 ]
 
 MIDDLEWARE = [
