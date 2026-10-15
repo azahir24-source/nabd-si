@@ -317,32 +317,32 @@ def translate_text(text):
         return text
         
 def _base_article_fields(item: dict) -> dict:
-    language = item.get("language", "en")
-    
-    if language == "ar":
-        title_en, title_ar = "", item["title"]
-        summary_en, summary_ar = "", item["summary"]
-    else:
-        title_en = item["title"]
-        summary_en = item["summary"]
-        # ترجمة العنوان والملخص تلقائياً إلى العربية عند اختلاف اللغة
-        title_ar = translate_text(title_en)
-        summary_ar = translate_text(summary_en)
+    # استخراج النصوص الأصلية
+    raw_title = item.get("title", "")
+    raw_summary = item.get("summary", "") or item.get("description", "")
+    detected_lang = item.get("language", "en")
+
+    # الاحتفاظ بالنصوص الأصلية (الإنجليزية)
+    title_en = raw_title
+    summary_en = raw_summary
+
+    # ترجمة إجبارية إلى العربية بغض النظر عن لغة المصدر
+    title_ar = translate_text(raw_title)
+    summary_ar = translate_text(raw_summary)
         
     return {
-        "original_language": language,
+        "original_language": detected_lang,
         "title_en": title_en,
         "title_ar": title_ar,
         "summary_en": summary_en,
         "summary_ar": summary_ar,
         "bullets_en": [],
         "bullets_ar": [],
-        "category": item["category"],
-        "priority": "high" if re.search(r"actively exploited|zero.day|critical vulnerability|actively exploited|استغلال نشط|ثغرة حرجة", f"{item['title']} {item['summary']}", re.I) else "normal",
-        "published_at": item["published_at"],
-        "content_hash": _canonical_hash(item["title"], item["url"]),
+        "category": item.get("category", "general"),
+        "priority": "high" if re.search(r"actively exploited|zero.day|critical vulnerability|استغلال نشط|ثغرة حرجة", f"{raw_title} {raw_summary}", re.I) else "normal",
+        "published_at": item.get("published_at"),
+        "content_hash": _canonical_hash(raw_title, item.get("url", "")),
     }
-
 
 def _enrich_item(item: dict) -> dict:
     base = _base_article_fields(item)
