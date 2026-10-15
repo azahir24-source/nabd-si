@@ -305,7 +305,15 @@ def _openai_enrichment(title: str, summary: str, original_language: str, categor
         raise ValueError("Translation provider returned an incomplete headline")
     return clean
 
-
+def translate_text(text):
+    if not text:
+        return ""
+    try:
+        return GoogleTranslator(source='auto', target='ar').translate(text)
+    except Exception as e:
+        print(f"Translation error: {e}")
+        return text
+        
 def _base_article_fields(item: dict) -> dict:
     language = item["language"]
     if language == "ar":
