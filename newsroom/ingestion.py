@@ -304,17 +304,21 @@ def _openai_enrichment(title: str, summary: str, original_language: str, categor
         raise ValueError("Translation provider returned an incomplete headline")
     return clean
 
+
+import time
 from deep_translator import GoogleTranslator
-import re
 
 def translate_text(text):
     if not text:
         return ""
     try:
+        # توقف مؤقت نصف ثانية لتفادي خطأ Too many requests
+        time.sleep(0.5)
         return GoogleTranslator(source='auto', target='ar').translate(text)
     except Exception as e:
         print(f"Translation error: {e}")
         return text
+        
         
 def _base_article_fields(item: dict) -> dict:
     # استخراج النصوص الأصلية
