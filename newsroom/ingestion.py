@@ -24,7 +24,6 @@ from django.db import connection, transaction
 from django.utils import timezone
 
 from .models import Article, IngestionRun, Source
-from deep_translator import GoogleTranslator
 
 logger = logging.getLogger(__name__)
 MAX_FEED_BYTES = 2 * 1024 * 1024
@@ -305,6 +304,9 @@ def _openai_enrichment(title: str, summary: str, original_language: str, categor
         raise ValueError("Translation provider returned an incomplete headline")
     return clean
 
+from deep_translator import GoogleTranslator
+import re
+
 def translate_text(text):
     if not text:
         return ""
@@ -315,13 +317,18 @@ def translate_text(text):
         return text
         
 def _base_article_fields(item: dict) -> dict:
-    language = item["language"]
+    language = item.get("language", "en")
+    
     if language == "ar":
         title_en, title_ar = "", item["title"]
         summary_en, summary_ar = "", item["summary"]
     else:
-        title_en, title_ar = item["title"], ""
-        summary_en, summary_ar = item["summary"], ""
+        title_en = item["title"]
+        summary_en = item["summary"]
+        # ترجمة العنوان والملخص تلقائياً إلى العربية عند اختلاف اللغة
+        title_ar = translate_text(title_en)
+        summary_ar = translate_text(summary_en)
+        
     return {
         "original_language": language,
         "title_en": title_en,
