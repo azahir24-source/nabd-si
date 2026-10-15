@@ -313,7 +313,7 @@ def translate_text(text):
         return ""
     try:
         # توقف مؤقت نصف ثانية لتفادي خطأ Too many requests
-        time.sleep(0.5)
+        time.sleep(2.0)
         return GoogleTranslator(source='auto', target='ar').translate(text)
     except Exception as e:
         print(f"Translation error: {e}")
