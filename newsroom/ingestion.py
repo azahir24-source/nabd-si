@@ -312,11 +312,12 @@ def translate_text(text):
     if not text:
         return ""
     try:
-        # توقف مؤقت نصف ثانية لتفادي خطأ Too many requests
+        # رفع وقت الانتظار إلى ثانيتين لتفادي الحظر المتكرر من جوجل
         time.sleep(2.0)
         return GoogleTranslator(source='auto', target='ar').translate(text)
     except Exception as e:
-        print(f"Translation error: {e}")
+        # في حال حدوث خطأ ضغط الطلبات، يتم إرجاع النص الأصلي مؤقتاً لتستمر العملية دون توقف
+        print(f"Translation rate-limit or error: {e}")
         return text
         
         
